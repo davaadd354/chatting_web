@@ -19,7 +19,7 @@ class ChatController extends Controller
     }
 
     public function chat_testing(){
-        return view('chat.testing-bootstrap');
+        return view('chat.testing-tailwind');
     }
 
     public function get_data_message(Request $request, Message $message){
