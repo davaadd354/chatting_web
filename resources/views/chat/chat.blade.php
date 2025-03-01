@@ -103,6 +103,11 @@
         var data = ''
         $.each(dataRoom, function(i,v){
           // var classList = v.channel == channelActive ? 'discussion message-active' : 'discussion'
+          console.log({
+            channel : v.channel,
+            channelActive : channelActive
+          })
+          var ch_active = v.channel == channelActive ? 'message-active' : ''
           var status = v.type == 1 && v.status == 'online' ? '<div class="online"></div>' : ''
           if(v.data_chat.length != 0){
             data += `
@@ -170,13 +175,6 @@
       
 
       const obj = Object.assign([], dataUser)
-
-      var test = collect(obj)
-                  .where('user_id')
-                  .where('user_id',2)
-                  .all()
-
-      console.log(test)
 
 
       Echo.join('chat') 
@@ -319,6 +317,7 @@
                 </div>
                 <div class="timer">${dataRoom[dataCh.channel].data_chat[0].send_time}</div>
             `)
+            
             if(channelActive == dataCh.channel){
               getMessage(dataRoom[dataCh.channel])
             }
@@ -326,8 +325,6 @@
           });
       })
       
-      
-
   })
 
     function getDataMessage(room_id){

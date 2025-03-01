@@ -14,7 +14,7 @@ class UserController extends Controller
         $user_id = $request->user_id;
         $user = User::find($user_id);
 
-        //$user->status = 'online';
+        $user->status = 'online';
 
         $user->save();
 
@@ -25,7 +25,7 @@ class UserController extends Controller
         $user_id = $request->user_id;
         $user = User::find($user_id);
 
-        //$user->status = 'offline';
+        $user->status = 'offline';
 
         $user->save();
 
