@@ -7,6 +7,18 @@
     <title>Chat App</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .online-badge {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 12px;
+            height: 12px;
+            background-color: #10B981;
+            border-radius: 50%;
+            border: 2px solid white;
+        }
+    </style>
 </head>
 <body class="h-screen bg-gray-100">
     <div class="flex h-full">
@@ -48,7 +60,7 @@
                     <button class="md:hidden mr-2 p-2 hover:bg-gray-100 rounded-full" onclick="toggleChat()">
                         <i class="fas fa-arrow-left"></i>
                     </button>
-                    <div class="w-10 h-10 bg-gray-300 rounded-full" id="room_header_img">
+                    <div class="w-10 h-10 bg-gray-300 rounded-full flex-shrink-0 relative" id="room_header_img">
                         <img src="https://ui-avatars.com/api/?name=Fauzan+IT" class="rounded-full" alt="avatar">
                     </div>
                     <div class="ml-4">
@@ -151,8 +163,6 @@
                     $.each(data.channel, function(i, val){
                         dataRoom[val.channel] = val
                         dataChannel.push(val.channel)
-
-                        console.log({dataRoom : dataRoom})
                     })
                     },
                     error : function(data){
@@ -160,6 +170,8 @@
                     }
                 })
 
+                // console.log({dataRoom : dataRoom})
+                // console.log({dataChannel : dataChannel})
             }
 
             function fetchDataRoom(dataRoom){
@@ -170,8 +182,9 @@
 
                         data += `
                             <div id="${v.channel}" class="flex items-center p-4 hover:bg-gray-100 cursor-pointer" onclick="toggleChat()">
-                                <div class="w-12 h-12 bg-gray-300 rounded-full flex-shrink-0">
+                                <div class="w-12 h-12 bg-gray-300 rounded-full flex-shrink-0 relative">
                                     <img src="https://ui-avatars.com/api/?name=${v.channel_name}" class="rounded-full" alt="avatar">
+                                    <div id="tampil_status_${v.channel}" class="online-badge hidden"></div>
                                 </div>
                                 <div class="ml-4 flex-1">
                                     <div class="flex justify-between">
@@ -189,9 +202,14 @@
             }
 
             function getMessage(dataCh){
+                var status_online = 'hidden'
+                if(dataRoom[dataCh.channel].status == 'online' && dataRoom[dataCh.channel].type == 1){
+                    status_online = ''
+                }
                // Replace header room chat
                $('#room_header_img').html(`
                     <img src="https://ui-avatars.com/api/?name=${dataCh.channel_name}" class="rounded-full" alt="avatar">
+                    <div id="tampil_status_${dataCh.channel}" class="online-badge ${status_online}"></div>
                `)
                $('#room_header_name').html(dataCh.channel_name)
 
@@ -231,21 +249,27 @@
             Echo.join('chat') 
             .here((users) => {
                 $.each(users,function(i, v){
-                // console.log(v)
-                    // var user = dataUser[v.id]
-                    // console.log(user)
-                    // dataRoom[user.channel].status = 'online'
-                    // fetchDataRoom(dataRoom)
+                    var user = dataUser[v.id]
+                    if(user && dataRoom[user.channel].type == 1){
+                        $(`#tampil_status_${user.channel}`).removeClass('hidden')
+                        dataRoom[user.channel].status = 'online'
+                    }
                 })
             })
 
             Echo.join('chat')
-            .joining((dataUser) => {
+            .joining((user) => {
+                var user_data = dataUser[user.id]
+                if(user_data && dataRoom[user_data.channel].type == 1){
+                    $(`#tampil_status_${user_data.channel}`).removeClass('hidden')
+                    dataRoom[user.channel].status = 'online'
+                }
+
                 url = "{{url('/set_online_user')}}"
                 token = "{{csrf_token()}}"
                 formData = {
                     '_token' : token,
-                    'user_id' : dataUser.id
+                    'user_id' : user.id
                 }
 
                 $.ajax({
@@ -257,12 +281,18 @@
                     }
                 })
             })
-            .leaving((dataUser) => {
+            .leaving((user) => {
+                var user_data = dataUser[user.id]
+                if(user_data && dataRoom[user_data.channel].type == 1){
+                    $(`#tampil_status_${user_data.channel}`).addClass('hidden')
+                    dataRoom[user.channel].status = 'offline'
+                }
+
                 url = "{{url('/set_offline_user')}}"
                 token = "{{csrf_token()}}"
                 formData = {
                     '_token' : token,
-                    'user_id' : dataUser.id
+                    'user_id' : user.id
                 }
 
                 $.ajax({
