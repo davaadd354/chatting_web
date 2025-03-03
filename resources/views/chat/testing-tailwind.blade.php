@@ -55,7 +55,7 @@
         <!-- Main Chat Area -->
         <div id="chatArea" class="hidden md:flex flex-1 flex-col">
             <!-- Chat Header -->
-            <div class="h-16 border-b bg-white flex items-center justify-between px-4" id="header_chat">
+            <div class="h-16 border-b bg-white flex items-center justify-between px-4 hidden" id="header_chat">
                 <div class="flex items-center">
                     <button class="md:hidden mr-2 p-2 hover:bg-gray-100 rounded-full" onclick="toggleChat()">
                         <i class="fas fa-arrow-left"></i>
@@ -64,7 +64,7 @@
                         <img src="https://ui-avatars.com/api/?name=Fauzan+IT" class="rounded-full" alt="avatar">
                     </div>
                     <div class="ml-4">
-                        <h3 class="font-semibold" id="room_header_name">Fauzan IT</h3>
+                        <h3 class="font-semibold" id="room_header_name"></h3>
                         <span class="text-green-500 text-sm" id="typing_chat"></span>
                     </div>
                 </div>
@@ -85,24 +85,12 @@
             </div>
 
             <!-- Messages Area -->
-            <div class="bg-gray-50 p-4 overflow-y-auto flex-1" id="message_chat">
-                <!-- Message bubbles -->
-                <div class="flex justify-end mb-4">
-                    <div class="bg-green-100 rounded-lg p-3 max-w-[75%] md:max-w-md">
-                        <p>ditutup menune?</p>
-                        <span class="text-xs text-gray-500 block text-right">18:37</span>
-                    </div>
-                </div>
-                <div class="flex mb-4">
-                    <div class="bg-white rounded-lg p-3 max-w-[75%] md:max-w-md">
-                        <p>hooh tutup sek wae</p>
-                        <span class="text-xs text-gray-500 block">18:37</span>
-                    </div>
-                </div>
+            <div class="bg-gray-50 p-4 overflow-y-auto flex-1 hidden" id="message_chat">
+               
             </div>
 
             <!-- Message Input -->
-            <div class="bg-white p-4 border-t" id="footer_chat">
+            <div class="bg-white p-4 border-t hidden" id="footer_chat">
                 <input type="nummber" id="room_id" value="" hidden>
                 <div class="flex items-center space-x-4">
                     <button class="p-2 hover:bg-gray-100 rounded-full hidden md:block">
@@ -334,6 +322,10 @@
 
             $.each(dataChannel, function(i,v){
                 $('#' + v).on('click', function(){
+                    $('#header_chat').removeClass('hidden')
+                    $('#message_chat').removeClass('hidden')
+                    $('#footer_chat').removeClass('hidden')
+                    
                     channelActive = v
                     var dataCh = dataRoom[v]
                     
