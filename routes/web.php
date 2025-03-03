@@ -26,7 +26,7 @@ Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 Route::get('/chat', [ChatController::class, 'index'])->name('chat');
-Route::get('/chat_testing', [ChatController::class, 'chat_testing'])->name('chat_testing');
+// Route::get('/chat_testing', [ChatController::class, 'chat_testing'])->name('chat_testing');
 Route::post('/get_data_message', [ChatController::class, 'get_data_message'])->name('get_data_message');
 Route::post('/send_message', [ChatController::class, 'send_message'])->name('send_message'); 
 Route::get('/get_data_room', [ChatController::class, 'get_data_room'])->name('get_data_room');  
